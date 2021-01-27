@@ -2,6 +2,7 @@ import 'dart:convert';
 
 
 import 'package:flutter_note/models/api_response.dart';
+import 'package:flutter_note/models/note.dart';
 import 'package:flutter_note/models/note_for_listing.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,6 +32,18 @@ class NotesService {
     })
         .catchError((_) => APIResponse<List<NoteForListing>>(error: true, errorMessage: 'An error occured'));
   }
+
+
+  Future<APIResponse<Note>> getNote(String noteID) {
+    return http.get(API + '/notes/' + noteID, headers: headers).then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body);
+        return APIResponse<Note>(data: Note.fromJson(jsonData));
+      }
+      return APIResponse<Note>(error: true, errorMessage: 'An error occured');
+    })
+        .catchError((_) => APIResponse<Note>(error: true, errorMessage: 'An error occured'));
+  }
 }
 
 
@@ -44,38 +57,3 @@ class NotesService {
 
 
 
-
-// import 'dart:convert';
-//
-// import 'package:flutter_note/models/api_response.dart';
-// import 'package:flutter_note/models/note_for_listing.dart';
-// import 'package:http/http.dart' as http;
-//
-// class NotesService{
-//
-//   static const API = 'https://tq-notes-api-jkrgrdggbq-el.a.run.app/apiKey';
-//   static const headers = {"apiKey": "d5836840-5533-407e-a50f-c0ef5d0b135d"};
-//   Future<APIResponse<List<NoteForListing>>> getNotesList(){
-//
-//      return http.get(API + '/notes',headers: headers)
-//          // ignore: missing_return
-//          .then((data) {
-//            if(data.statusCode == 200) {
-//              final jsonData = json.decode(data.body);
-//              final notes = <NoteForListing>[];
-//              for (var item in jsonData) {
-//                final note = NoteForListing('noteID', 'noteTitle', DateTime.parse(item['createDateTime']) ,item['latestEditDateTime'] != null ? DateTime.parse(item['latestEditDateTime'])
-//                    : null,
-//
-//                );
-//                notes.add(note);
-//
-//
-//              }
-//              return APIResponse<List<NoteForListing>>(data: notes);
-//            }
-//            return APIResponse<List<NoteForListing>>(error: true, errorMessage: 'An error occured');
-//      })
-//          .catchError((_) => APIResponse<List<NoteForListing>>(error: true, errorMessage: 'An error occured'));
-//   }
-// }
