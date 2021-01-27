@@ -1,5 +1,4 @@
-class APIResponse<T>{
-
+class APIResponse<T> {
   T data;
   bool error;
   String errorMessage;
